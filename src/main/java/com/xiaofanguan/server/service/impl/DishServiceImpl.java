@@ -45,4 +45,10 @@ public class DishServiceImpl implements DishService {
         });
         return ResponseResult.success(dishCategories);
     }
+
+    @Override
+    public ResponseResult<Boolean> deleteById(String id) {
+        dishMapper.deleteById(id);
+        return ResponseResult.success(true);
+    }
 }

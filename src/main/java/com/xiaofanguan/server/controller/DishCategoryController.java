@@ -23,4 +23,10 @@ public class DishCategoryController {
     public ResponseResult<List<DishCategory>> getDishCategoriesByRestaurantId() {
         return dishCategoryService.getDishCategoriesByRestaurantId("");
     }
+
+
+    @GetMapping("/deleteById")
+    public ResponseResult<Boolean> deleteById(@RequestParam String id) {
+        return dishCategoryService.deleteById(id);
+    }
 }

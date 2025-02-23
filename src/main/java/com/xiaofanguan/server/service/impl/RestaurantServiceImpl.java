@@ -49,7 +49,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             fakeRestaurant.setBindTime(LocalDateTime.now());
             fakeRestaurant.setAddress("新希望家园");
             fakeRestaurant.setRestaurantName("梁文雪的小饭馆");
-            fakeRestaurant.setDescription("梁文雪的小饭馆营业啦");
+            fakeRestaurant.setDescription("梁文雪的小饭馆营业啦！！！");
             fakeRestaurant.setFileId("5ea4479b04d644c0b7a5bac17f398991");
             return ResponseResult.success(fakeRestaurant);
 //        }

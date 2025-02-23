@@ -10,4 +10,6 @@ public interface DishService {
     ResponseResult<Dish> addDish(Dish dish);
     ResponseResult<Dish> updateDish(Dish dish);
     ResponseResult<List<DishCategory>> getDishesByRestaurantId(String restaurantId);
+
+    ResponseResult<Boolean> deleteById(String id);
 }

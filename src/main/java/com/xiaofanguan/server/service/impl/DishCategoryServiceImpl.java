@@ -12,8 +12,11 @@ import java.util.List;
 
 @Service
 public class DishCategoryServiceImpl implements DishCategoryService {
-    @Autowired
-    private DishCategoryMapper dishCategoryMapper;
+    private final DishCategoryMapper dishCategoryMapper;
+
+    public DishCategoryServiceImpl(DishCategoryMapper dishCategoryMapper) {
+        this.dishCategoryMapper = dishCategoryMapper;
+    }
 
     @Override
     public ResponseResult<DishCategory> addDishCategory(DishCategory dishCategory) {
@@ -29,5 +32,11 @@ public class DishCategoryServiceImpl implements DishCategoryService {
         queryWrapper.orderByAsc("create_time");
         List<DishCategory> dishCategories = dishCategoryMapper.selectList(queryWrapper);
         return ResponseResult.success(dishCategories);
+    }
+
+    @Override
+    public ResponseResult<Boolean> deleteById(String id) {
+        dishCategoryMapper.deleteById(id);
+        return ResponseResult.success(true);
     }
 }
