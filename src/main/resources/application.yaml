@@ -3,9 +3,9 @@ spring:
     name: demo
 
   datasource:
-    url: jdbc:mysql://localhost:3306/xiaofanguan?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://124.71.213.221:3306/xiaofanguan?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true
     username: root
-    password: 1qaz!QAZ
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       # 连接池名
