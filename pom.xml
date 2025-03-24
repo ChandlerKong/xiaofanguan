@@ -92,6 +92,12 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.2.2</version>
+        </dependency>
     </dependencies>
 
     <build>

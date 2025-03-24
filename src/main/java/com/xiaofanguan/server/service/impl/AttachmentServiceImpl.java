@@ -1,18 +1,16 @@
 package com.xiaofanguan.server.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xiaofanguan.server.common.ResponseResult;
 import com.xiaofanguan.server.common.WebContext;
 import com.xiaofanguan.server.mapper.AttachmentMapper;
 import com.xiaofanguan.server.pojo.Attachment;
 import com.xiaofanguan.server.service.AttachmentService;
-import org.apache.commons.codec.binary.Base64;
+import com.xiaofanguan.server.util.minio.MinioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,53 +18,60 @@ import java.util.UUID;
 public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     private AttachmentMapper attachmentMapper;
+    
+    @Autowired
+    private MinioService minioService;
 
     @Override
+    @Transactional
     public ResponseResult<Attachment> uploadFile(MultipartFile file) {
         try {
-            String fileName = file.getOriginalFilename();
-            String fileType = file.getContentType();
-            long fileSize = file.getSize();
-            String base64Content = Base64.encodeBase64String(file.getBytes());
-
+            // 上传文件到MinIO
+            String minioFileName = minioService.uploadFile(file);
+            
+            // 保存附件信息到数据库
             Attachment attachment = new Attachment();
             attachment.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-            attachment.setFileName(fileName);
-            attachment.setFileType(fileType);
-            attachment.setFileSize(fileSize);
-            attachment.setBase64Content(base64Content);
+            attachment.setFileName(minioFileName);
             attachment.setCreateTime(LocalDateTime.now());
             attachment.setCreatedBy(WebContext.getUserId());
 
             attachmentMapper.insert(attachment);
             return ResponseResult.success(attachment);
-        } catch (IOException e) {
-            return ResponseResult.error(500, "文件上传失败");
+        } catch (Exception e) {
+            return ResponseResult.error(500, "文件上传失败: " + e.getMessage());
         }
     }
 
     @Override
-    public ResponseResult<Attachment> downloadFile(String id, HttpServletResponse response) {
-        Attachment attachment = attachmentMapper.selectById(id);
-        if (attachment == null) {
-            return ResponseResult.error(404, "文件未找到");
-        }
-
+    public ResponseResult<String> getFileUrl(String id) {
         try {
-            // 设置响应头
-            response.setContentType(attachment.getFileType());
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + attachment.getFileName() + "\"");
-            response.setContentLengthLong(attachment.getFileSize());
+            Attachment attachment = attachmentMapper.selectById(id);
+            if (attachment == null) {
+                return ResponseResult.error(404, "文件不存在");
+            }
+            String url = minioService.getFileUrl(attachment.getFileName());
+            return ResponseResult.success(url);
+        } catch (Exception e) {
+            return ResponseResult.error(500, "获取文件链接失败: " + e.getMessage());
+        }
+    }
 
-            // 将 Base64 内容解码并写入响应流
-            byte[] fileBytes = Base64.decodeBase64(attachment.getBase64Content());
-            response.getOutputStream().write(fileBytes);
-            response.getOutputStream().flush();
-            response.getOutputStream().close();
-
-            return ResponseResult.success(attachment);
-        } catch (IOException e) {
-            return ResponseResult.error(500, "文件下载失败");
+    @Override
+    @Transactional
+    public ResponseResult<Void> deleteFile(String id) {
+        try {
+            Attachment attachment = attachmentMapper.selectById(id);
+            if (attachment == null) {
+                return ResponseResult.error(404, "文件不存在");
+            }
+            // 从MinIO中删除文件
+            minioService.deleteFile(attachment.getFileName());
+            // 从数据库中删除记录
+            attachmentMapper.deleteById(id);
+            return ResponseResult.success();
+        } catch (Exception e) {
+            return ResponseResult.error(500, "删除文件失败: " + e.getMessage());
         }
     }
 }

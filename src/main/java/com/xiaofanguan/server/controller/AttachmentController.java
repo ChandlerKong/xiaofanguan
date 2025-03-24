@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
 @RequestMapping("/attachment")
 public class AttachmentController {
@@ -18,9 +16,13 @@ public class AttachmentController {
     public ResponseResult<?> uploadFile(@RequestParam("file") MultipartFile file) {
         return attachmentService.uploadFile(file);
     }
-
-    @GetMapping("/download/{id}")
-    public ResponseResult<?> downloadFile(@PathVariable String id, HttpServletResponse response) {
-        return attachmentService.downloadFile(id, response);
+    @GetMapping("/{id}")
+    public ResponseResult<?> getFileUrl(@PathVariable String id) {
+        return attachmentService.getFileUrl(id);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseResult<?> deleteFile(@PathVariable String id) {
+        attachmentService.deleteFile(id);
+        return ResponseResult.success();
     }
 }

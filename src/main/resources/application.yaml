@@ -50,3 +50,15 @@ logging:
     com.xiaofanguan.server.mapper: debug
 
 
+minio:
+  url: http://localhost:9000
+  access-key: admin
+  secret-key: admin123
+  bucket-name: demo
+
+wechat:
+  miniapp:
+    app-id: 你的小程序appId
+    app-secret: 你的小程序appSecret
+
+

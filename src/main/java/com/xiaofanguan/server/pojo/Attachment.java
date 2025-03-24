@@ -14,16 +14,7 @@ public class Attachment {
     private String id; // 主键
 
     @TableField("file_name")
-    private String fileName; // 文件名
-
-    @TableField("file_type")
-    private String fileType; // 文件类型
-
-    @TableField("file_size")
-    private Long fileSize; // 文件大小（单位：字节）
-
-    @TableField("base64_content")
-    private String base64Content; // 文件的 Base64 编码内容
+    private String fileName; // MinIO中的文件名
 
     @TableField("create_time")
     private LocalDateTime createTime; // 创建时间

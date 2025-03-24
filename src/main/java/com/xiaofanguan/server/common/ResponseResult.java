@@ -19,8 +19,23 @@ public class ResponseResult<T> {
         return new ResponseResult<>(200, "成功", data);
     }
 
+    public static <T> ResponseResult<T> success() {
+        return new ResponseResult<>(200, "成功", null);
+    }
+
+
+
+    // 成功响应
+    public static <T> ResponseResult<T> ok(T data) {
+        return new ResponseResult<>(200, "成功", data);
+    }
+
     // 失败响应
     public static <T> ResponseResult<T> error(int code, String message) {
         return new ResponseResult<>(code, message, null);
+    }
+    // 失败响应
+    public static <T> ResponseResult<T> error(String message) {
+        return new ResponseResult<>(500, message, null);
     }
 }
